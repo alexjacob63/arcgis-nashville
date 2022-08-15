@@ -11,5 +11,6 @@ urlpatterns = [
     path('assessment-history/', AssessmentHistory.as_view()),
     path('permit-history/', PermitHistory.as_view()),
     path('elevation-certificate/', ElevationCertificate.as_view()),
-    path('general-info/', GeneralInfo.as_view())
+    path('general-info/', GeneralInfo.as_view()),
+    path('favorites/', FavoritesAPI.as_view())
 ]

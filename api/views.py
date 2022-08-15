@@ -1,3 +1,5 @@
+import os
+import json
 import requests
 import xmltodict
 
@@ -165,3 +167,41 @@ class GeneralInfo(APIView):
 
 def get_params(key, value):
     return {'onlyactive': 'false', key: value}
+
+
+class FavoritesAPI(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def __init__(self):
+        self.path = os.path.join(os.path.dirname(os.path.dirname(__file__)),'api/fav.json')
+        super(FavoritesAPI, self).__init__()
+
+    def get(self, request, *args, **kwargs):
+        with open(self.path, "r") as f:
+            data = json.load(f)
+            favs = data["favourites"]
+        return Response(data = {"favourites": favs})
+
+    def post(self, request, *args, **kwargs):
+        obj_id = request.data["objectId"]
+        with open(self.path, "r+") as f:
+            data = json.load(f)
+            data["favourites"] = list(set(data['favourites'] + [int(obj_id)]))
+            f.seek(0)
+            f.write(json.dumps(data))
+            f.truncate()
+        return Response(data = {"Message": "Added to favorites!!!!!!!!"})
+
+    def delete(self, request, *args, **kwargs):
+        obj_id = request.data["objectId"]
+        print(type(obj_id))
+        with open(self.path, "r+") as f:
+            data = json.load(f)
+            favs = data['favourites']
+            favs.remove(int(obj_id))
+            data["favourites"] = favs
+            f.seek(0)
+            f.write(json.dumps(data))
+            f.truncate()
+        return Response(data = {"Message": "Removed from favorites!!!!!!!!"})
